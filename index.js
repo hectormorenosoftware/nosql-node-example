@@ -14,6 +14,14 @@ app.get("/get-user", (req, res) => {
   res.send(jsondata[userName]);
 });
 
+app.get("/get-users", (req, res) => {
+  const rawData = fs.readFileSync("./database/users.json");
+  const jsonData = JSON.parse(rawData);
+  const arrayData = Object.values(jsonData);
+
+  res.send(arrayData);
+});
+
 app.post("/create-user/:userName/:name/:lastName", (req, res) => {
   const { userName, name, lastName } = req.params;
   const rawData = fs.readFileSync("./database/users.json");
@@ -22,7 +30,10 @@ app.post("/create-user/:userName/:name/:lastName", (req, res) => {
   jsonDataToModify[userName] = {
     name,
     lastName,
+    userName: userName,
   };
+
+  console.log(jsonDataToModify, "modify");
 
   const jsonDataToWrite = JSON.stringify(jsonDataToModify);
   fs.writeFileSync("./database/users.json", jsonDataToWrite);
