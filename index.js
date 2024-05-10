@@ -33,8 +33,6 @@ app.post("/create-user/:userName/:name/:lastName", (req, res) => {
     userName: userName,
   };
 
-  console.log(jsonDataToModify, "modify");
-
   const jsonDataToWrite = JSON.stringify(jsonDataToModify);
   fs.writeFileSync("./database/users.json", jsonDataToWrite);
 
@@ -42,15 +40,14 @@ app.post("/create-user/:userName/:name/:lastName", (req, res) => {
 });
 
 app.post("/update-user", (req, res) => {
-  const { userName, name, lastName, newUserName } = req.body;
+  const { userName, name, lastName } = req.body;
   const rawData = fs.readFileSync("./database/users.json");
   const jsonDataToModify = JSON.parse(rawData);
 
-  delete jsonDataToModify[userName];
-
-  jsonDataToModify[newUserName] = {
+  jsonDataToModify[userName] = {
     name,
     lastName,
+    userName,
   };
 
   const jsonDataToWrite = JSON.stringify(jsonDataToModify);
