@@ -39,7 +39,7 @@ app.post("/create-user/:userName/:name/:lastName", (req, res) => {
   res.send("Successfully created user");
 });
 
-app.post("/update-user", (req, res) => {
+app.put("/update-user", (req, res) => {
   const { userName, name, lastName } = req.body;
   const rawData = fs.readFileSync("./database/users.json");
   const jsonDataToModify = JSON.parse(rawData);
