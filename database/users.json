@@ -1,17 +1,29 @@
 {
-  "bryanReynolds": {
-    "name": "Bryan",
-    "lastName": "Reynolds",
-    "userName": "bryanReynolds"
+  "FranklinDelanoRoosevelt": {
+    "name": "Franklin",
+    "lastName": "Roosevelt",
+    "userName": "FranklinDelanoRoosevelt",
+    "balance": "777000000000000",
+    "availableBalance": "777000000000000",
+    "accountType": "checking",
+    "currencyType": "USD"
   },
-  "davidReynolds": {
-    "name": "David",
-    "lastName": "Reynolds",
-    "userName": "davidReynolds"
+  "MaryDelanoRoosevelt": {
+    "name": "Mary",
+    "lastName": "DelanoRoosevelt",
+    "userName": "MaryDelanoRoosevelt",
+    "balance": "75500000000",
+    "availableBalance": "75500000000",
+    "accountType": "checking",
+    "currencyType": "USD"
   },
-  "lyndaReynolds": {
-    "name": "Lynda",
-    "lastName": "Reynolds",
-    "userName": "lyndaReynolds"
+  "DarlaDelanoRoosevelt": {
+    "name": "Darla",
+    "lastName": "DelanoRoosevelt",
+    "userName": "DarlaDelanoRoosevelt",
+    "balance": "77500000000",
+    "availableBalance": "77500000000",
+    "accountType": "checking",
+    "currencyType": "USD"
   }
 }

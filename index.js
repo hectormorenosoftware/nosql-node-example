@@ -22,25 +22,48 @@ app.get("/get-users", (req, res) => {
   res.send(arrayData);
 });
 
-app.post("/create-user/:userName/:name/:lastName", (req, res) => {
-  const { userName, name, lastName } = req.params;
-  const rawData = fs.readFileSync("./database/users.json");
-  const jsonDataToModify = JSON.parse(rawData);
+app.post(
+  "/create-user/:userName/:name/:lastName/:balance/:availableBalance/:accountType/:currencyType",
+  (req, res) => {
+    const {
+      userName,
+      name,
+      lastName,
+      balance,
+      availableBalance,
+      accountType,
+      currencyType,
+    } = req.params;
+    const rawData = fs.readFileSync("./database/users.json");
+    const jsonDataToModify = JSON.parse(rawData);
 
-  jsonDataToModify[userName] = {
-    name,
-    lastName,
-    userName: userName,
-  };
+    jsonDataToModify[userName] = {
+      name,
+      lastName,
+      userName,
+      balance,
+      availableBalance,
+      accountType,
+      currencyType,
+    };
 
-  const jsonDataToWrite = JSON.stringify(jsonDataToModify);
-  fs.writeFileSync("./database/users.json", jsonDataToWrite);
+    const jsonDataToWrite = JSON.stringify(jsonDataToModify);
+    fs.writeFileSync("./database/users.json", jsonDataToWrite);
 
-  res.send("Successfully created user");
-});
+    res.send("Successfully created user");
+  }
+);
 
 app.put("/update-user", (req, res) => {
-  const { userName, name, lastName } = req.body;
+  const {
+    userName,
+    name,
+    lastName,
+    balance,
+    availableBalance,
+    accountType,
+    currencyType,
+  } = req.body;
   const rawData = fs.readFileSync("./database/users.json");
   const jsonDataToModify = JSON.parse(rawData);
 
@@ -48,6 +71,10 @@ app.put("/update-user", (req, res) => {
     name,
     lastName,
     userName,
+    balance,
+    availableBalance,
+    accountType,
+    currencyType,
   };
 
   const jsonDataToWrite = JSON.stringify(jsonDataToModify);
