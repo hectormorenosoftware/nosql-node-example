@@ -25,5 +25,14 @@
     "availableBalance": "77500000000",
     "accountType": "checking",
     "currencyType": "USD"
+  },
+  "USFederalGovernmentBudgetForWages2024": {
+    "name": "USFederalGovernment",
+    "lastName": "BudgetForWages2024",
+    "userName": "USFederalGovernmentBudgetForWages2024",
+    "balance": "2577887777000000000000000",
+    "availableBalance": "2577887777000000000000000",
+    "accountType": "checking",
+    "currencyType": "USD"
   }
 }
