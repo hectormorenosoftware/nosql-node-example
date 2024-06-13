@@ -1,100 +1,99 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const app = express();
+const cluster = require("cluster");
+const numCPUs = require("os").cpus().length;
 const fs = require("fs");
 
-app.use(express.static("build"));
-app.use(bodyParser.json());
+if (cluster.isMaster) {
+  for (var i = 0; i < numCPUs; i++) {
+    // Create a worker
+    console.log(`cluster forked for server at cpu number ${i}`);
+    cluster.fork();
+  }
+} else {
+  // Workers share the TCP connection in this server
+  const app = express();
 
-app.get("/get-user", (req, res) => {
-  const { userName } = req.body;
-  const rawdata = fs.readFileSync("./database/users.json");
-  const jsondata = JSON.parse(rawdata);
+  app.use(express.static("build"));
+  app.use(bodyParser.json());
 
-  res.send(jsondata[userName]);
-});
+  app.get("/get-account", (req, res) => {
+    const { userName } = req.body;
+    const rawdata = fs.readFileSync("./database/accounts.json");
+    const jsondata = JSON.parse(rawdata);
 
-app.get("/get-users", (req, res) => {
-  const rawData = fs.readFileSync("./database/users.json");
-  const jsonData = JSON.parse(rawData);
-  const arrayData = Object.values(jsonData);
+    res.send(jsondata[userName]);
+  });
 
-  res.send(arrayData);
-});
+  app.get("/get-accounts", (req, res) => {
+    const rawData = fs.readFileSync("./database/accounts.json");
+    const jsonData = JSON.parse(rawData);
+    const arrayData = Object.values(jsonData);
 
-app.post(
-  "/create-user/:userName/:name/:lastName/:balance/:availableBalance/:accountType/:currencyType",
-  (req, res) => {
-    const {
-      userName,
-      name,
-      lastName,
-      balance,
-      availableBalance,
-      accountType,
-      currencyType,
-    } = req.params;
-    const rawData = fs.readFileSync("./database/users.json");
+    res.send(arrayData);
+  });
+
+  app.post(
+    "/create-account/:userName/:name/:lastName/:balance/:accountType/:currencyType",
+    (req, res) => {
+      const { userName, name, lastName, balance, accountType, currencyType } =
+        req.params;
+      const rawData = fs.readFileSync("./database/accounts.json");
+      const jsonDataToModify = JSON.parse(rawData);
+
+      jsonDataToModify[userName] = {
+        name,
+        lastName,
+        userName,
+        balance: Number(balance),
+        accountType,
+        currencyType,
+      };
+
+      const jsonDataToWrite = JSON.stringify(jsonDataToModify);
+      fs.writeFileSync("./database/accounts.json", jsonDataToWrite);
+
+      res.send(`Successfully created ${accountType} account`);
+    }
+  );
+
+  app.put("/add-money", (req, res) => {
+    const { userName, amount } = req.body;
+    const rawData = fs.readFileSync("./database/accounts.json");
     const jsonDataToModify = JSON.parse(rawData);
+    const jsonAccountData = jsonDataToModify[userName];
+    const { name, lastName, balance, accountType, currencyType } =
+      jsonAccountData;
 
     jsonDataToModify[userName] = {
       name,
       lastName,
       userName,
-      balance,
-      availableBalance,
+      balance: Number(balance) + Number(amount),
       accountType,
       currencyType,
     };
 
     const jsonDataToWrite = JSON.stringify(jsonDataToModify);
-    fs.writeFileSync("./database/users.json", jsonDataToWrite);
+    fs.writeFileSync("./database/accounts.json", jsonDataToWrite);
 
-    res.send("Successfully created user");
-  }
-);
+    res.send(`Added money successfully to ${accountType} account`);
+  });
 
-app.put("/update-user", (req, res) => {
-  const {
-    userName,
-    name,
-    lastName,
-    balance,
-    availableBalance,
-    accountType,
-    currencyType,
-  } = req.body;
-  const rawData = fs.readFileSync("./database/users.json");
-  const jsonDataToModify = JSON.parse(rawData);
+  app.delete("/delete-account", (req, res) => {
+    const { userName } = req.body;
+    const rawData = fs.readFileSync("./database/accounts.json");
+    const jsonDataToModify = JSON.parse(rawData);
+    delete jsonDataToModify[userName];
 
-  jsonDataToModify[userName] = {
-    name,
-    lastName,
-    userName,
-    balance,
-    availableBalance,
-    accountType,
-    currencyType,
-  };
+    const jsonDataToWrite = JSON.stringify(jsonDataToModify);
+    fs.writeFileSync("./database/accounts.json", jsonDataToWrite);
 
-  const jsonDataToWrite = JSON.stringify(jsonDataToModify);
-  fs.writeFileSync("./database/users.json", jsonDataToWrite);
+    res.send("Successfully deleted account");
+  });
 
-  res.send("Successfully Updated User");
-});
-
-app.delete("/delete-user", (req, res) => {
-  const { userName } = req.body;
-  const rawData = fs.readFileSync("./database/users.json");
-  const jsonDataToModify = JSON.parse(rawData);
-  delete jsonDataToModify[userName];
-
-  const jsonDataToWrite = JSON.stringify(jsonDataToModify);
-  fs.writeFileSync("./database/users.json", jsonDataToWrite);
-
-  res.send("Successfully Deleted User");
-});
-
-app.listen(process.env.PORT || 5000, () => {
-  console.log("listenting");
-});
+  // All workers use this port
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`server listenting in port ${process.env.PORT || 5000}`);
+  });
+}

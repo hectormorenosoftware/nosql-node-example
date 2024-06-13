@@ -1,0 +1,18 @@
+{
+  "JohnNewton": {
+    "name": "John",
+    "lastName": "Newton",
+    "userName": "JohnNewton",
+    "balance": 11000,
+    "accountType": "checking",
+    "currencyType": "USD"
+  },
+  "PatWillson": {
+    "name": "Pat",
+    "lastName": "Willson",
+    "userName": "PatWillson",
+    "balance": 250175,
+    "accountType": "checking",
+    "currencyType": "USD"
+  }
+}
